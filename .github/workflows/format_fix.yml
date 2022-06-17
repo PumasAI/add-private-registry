@@ -1,0 +1,39 @@
+name: Format Fix
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+concurrency:
+  # Skip intermediate builds: all builds except for builds on the `main` branch
+  # Cancel intermediate builds: only pull request builds
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.ref != 'refs/heads/main' || github.run_number }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: '1'
+      - run: make format-fix
+      - name: Create pull request
+        id: create_pr
+        uses: peter-evans/create-pull-request@923ad837f191474af6b1721408744feb989a4c27 # v4.0.4
+        with:
+          token: ${{  secrets.GITHUB_TOKEN }}
+          commit-message: '🤖 Automatically format the source code files'
+          title: '🤖 Automatically format the source code files'
+          body: |-
+            This pull request formats the source code files using the JuliaFormatter package.
+            
+            Note: CI will not automatically run on this PR. Please open and close this PR to trigger CI.
+          branch: bot/format/${{ github.ref }}
+          delete-branch: true

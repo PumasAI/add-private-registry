@@ -1,0 +1,62 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    tags: '*'
+concurrency:
+  # Skip intermediate builds: all builds except for builds on the `main` branch
+  # Cancel intermediate builds: only pull request builds
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.ref != 'refs/heads/main' || github.run_number }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macOS-latest
+        install_general_registry:
+          - true
+          - false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: '1'
+      - run: julia .ci/setup.jl # sets the `TEMP_DEPOT` environment variable
+      - uses: ./ # run this action
+        with:
+          juliahub_token_encoded: ${{ secrets.JULIAHUB_TOKEN_ENCODED }}
+          private_registry_name: ${{ secrets.TEST_REGISTRY_NAME }}
+          private_registry_uuid: ${{ secrets.TEST_REGISTRY_UUID }}
+          install_general_registry: ${{ matrix.install_general_registry}}
+        env:
+          JULIA_PKG_SERVER: ${{ secrets.TEST_PKG_SERVER }}
+          JULIA_DEPOT_PATH: ${{ env.TEMP_DEPOT }}
+      - run: julia .ci/test_registries_general${{ matrix.install_general_registry}}.jl
+        env:
+          JULIA_PKG_SERVER: ${{ secrets.TEST_PKG_SERVER }}
+          JULIA_DEPOT_PATH: ${{ env.TEMP_DEPOT }}
+          TEST_REGISTRY_NAME: ${{ secrets.TEST_REGISTRY_NAME }}
+          TEST_REGISTRY_UUID: ${{ secrets.TEST_REGISTRY_UUID }}
+      - run: julia .ci/test_pkg_add.jl
+        env:
+          JULIA_PKG_SERVER: ${{ secrets.TEST_PKG_SERVER }}
+          JULIA_DEPOT_PATH: ${{ env.TEMP_DEPOT }}
+          TEST_PACKAGE_NAME: ${{ secrets.TEST_PACKAGE_NAME }}
+          TEST_PACKAGE_UUID: ${{ secrets.TEST_PACKAGE_UUID }}
+      - run: julia .ci/teardown.jl
+        env:
+          TEMP_DEPOT: ${{ env.TEMP_DEPOT }}

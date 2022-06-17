@@ -1,0 +1,35 @@
+name: 'Add Private Registry'
+description: 'Add a private Julia package registry'
+inputs:
+  ### Required inputs:
+  juliahub_token_encoded:
+    description: 'Base64-encoded JuliaHub token. This should be kept secret.'
+    required: true
+  private_registry_name:
+    description: 'Name of the private registry.'
+    required: true
+  private_registry_uuid:
+    description: 'UUID of the private registry.'
+    required: true
+  ### Optional inputs:
+  install_general_registry:
+    description: 'Whether or not the General registry should also be installed. Default: true'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+    - name: Create the `auth.toml` file
+      run: julia ${GITHUB_ACTION_PATH:?}/lib/create_auth_toml.jl
+      shell: bash
+      env:
+        JULIA_PKG_SERVER: ${{ env.JULIA_PKG_SERVER }}
+        JULIAHUB_TOKEN_ENCODED: ${{ inputs.juliahub_token_encoded }}
+    - name: Add the private registry and the General registry
+      run: julia ${GITHUB_ACTION_PATH:?}/lib/add_registries.jl
+      shell: bash
+      env:
+        JULIA_PKG_SERVER: ${{ env.JULIA_PKG_SERVER }}
+        PRIVATE_REGISTRY_NAME: ${{ inputs.private_registry_name }}
+        PRIVATE_REGISTRY_UUID: ${{ inputs.private_registry_uuid }}
+        INSTALL_GENERAL_REGISTRY: ${{ inputs.install_general_registry }}
