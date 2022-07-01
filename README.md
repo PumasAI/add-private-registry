@@ -23,4 +23,4 @@ Then add the following step after your job's [`setup-julia`](https://github.com/
     private_registry_uuid: 00000000-0000-0000-0000-000000000000
 ```
 
-where `COMMIT` is the commit SHA that of this action that you would like to use.
+where `COMMIT` is the commit SHA of this action that you would like to use.
