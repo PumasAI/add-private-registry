@@ -10,19 +10,6 @@ function get_juliahub_token_toml()
     return juliahub_token_toml
 end
 
-function get_server()
-    r = r"^(?:http:\/\/)?(?:https:\/\/)?([\w\.]*?)[\/]?$"
-    pkg_server = Pkg.pkg_server()
-    m = match(r, pkg_server)
-    server = m[1]
-    if !occursin(r"^[\w\.]*?$", server)
-        msg = "Server name contains invalid characters"
-        @error msg pkg_server server
-        throw(ErrorException(msg))
-    end
-    return server
-end
-
 function check_auth_toml_file(token_file)
     # Sanity check to make sure that the `auth.toml` file is valid TOML
     d = TOML.parsefile(token_file)
@@ -40,7 +27,9 @@ end
 
 function main_create_auth_toml()
     juliahub_token_toml = get_juliahub_token_toml()
-    token_file = joinpath(Pkg.depots1(), "servers", get_server(), "auth.toml")
+    pkg_server = Pkg.pkg_server()
+    server_dir = Pkg.PlatformEngines.get_server_dir("$(pkg_server)/", pkg_server)
+    token_file = joinpath(server_dir, "auth.toml")
     mkpath(dirname(token_file))
     open(token_file, "w") do io
         println(io, juliahub_token_toml)
