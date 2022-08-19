@@ -26,7 +26,7 @@ jobs:
       - run: make format-fix
       - name: Create pull request
         id: create_pr
-        uses: peter-evans/create-pull-request@20dac2ed4875a1a8422d233a68f69088637446df
+        uses: peter-evans/create-pull-request@18f90432bedd2afd6a825469ffd38aa24712a91d
         with:
           token: ${{  secrets.GITHUB_TOKEN }}
           commit-message: '🤖 Automatically format the source code files'
