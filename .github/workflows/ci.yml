@@ -19,8 +19,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
+        julia-version:
+          - '1.7'
+          - '1.8'
+          - '1'
         os:
           - ubuntu-latest
           - windows-latest
@@ -34,7 +38,7 @@ jobs:
           persist-credentials: false
       - uses: julia-actions/setup-julia@v1
         with:
-          version: '1'
+          version: '${{ matrix.julia-version }}'
       - run: julia .ci/setup.jl # sets the `TEMP_DEPOT` environment variable
       - uses: ./ # run this action
         with:
