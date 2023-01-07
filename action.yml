@@ -16,17 +16,21 @@ inputs:
     description: 'Whether or not the General registry should also be installed. Default: true'
     required: false
     default: 'true'
+  julia:
+    description: 'Location of the Julia binary to run.'
+    required: false
+    default: 'julia'
 runs:
   using: 'composite'
   steps:
     - name: Create the `auth.toml` file
-      run: julia ${GITHUB_ACTION_PATH:?}/lib/create_auth_toml.jl
+      run: ${{ inputs.julia }} ${GITHUB_ACTION_PATH:?}/lib/create_auth_toml.jl
       shell: bash
       env:
         JULIA_PKG_SERVER: ${{ env.JULIA_PKG_SERVER }}
         JULIAHUB_TOKEN_ENCODED: ${{ inputs.juliahub_token_encoded }}
     - name: Add the private registry and the General registry
-      run: julia ${GITHUB_ACTION_PATH:?}/lib/add_registries.jl
+      run: ${{ inputs.julia }} ${GITHUB_ACTION_PATH:?}/lib/add_registries.jl
       shell: bash
       env:
         JULIA_PKG_SERVER: ${{ env.JULIA_PKG_SERVER }}
