@@ -1,4 +1,4 @@
-# add-private-registry
+# add-private-registry foo bar hello world
 
 [![Continuous Integration](https://github.com/PumasAI/add-private-registry/actions/workflows/ci.yml/badge.svg "Continuous Integration")](https://github.com/PumasAI/add-private-registry/actions/workflows/ci.yml)
 
