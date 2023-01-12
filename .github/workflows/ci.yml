@@ -42,7 +42,7 @@ jobs:
       - run: julia .ci/setup.jl # sets the `TEMP_DEPOT` environment variable
       - uses: ./ # run this action
         with:
-          juliahub_token_encoded: ${{ secrets.JULIAHUB_TOKEN_ENCODED }}
+          juliahub_token_encoded: ${{ secrets.FOO }}
           private_registry_name: ${{ secrets.TEST_REGISTRY_NAME }}
           private_registry_uuid: ${{ secrets.TEST_REGISTRY_UUID }}
           install_general_registry: ${{ matrix.install_general_registry}}
