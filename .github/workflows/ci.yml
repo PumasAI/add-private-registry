@@ -15,6 +15,17 @@ concurrency:
 permissions:
   contents: read
 jobs:
+  finalize:
+    timeout-minutes: 10
+    needs: [test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo test: ${{ needs.test.result }}
+      - run: exit 1
+        if: |
+          (needs.test.result != 'success')
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
