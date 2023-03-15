@@ -1,12 +1,11 @@
 name: CI
 on:
+  merge_group:
   pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
-    tags: '*'
+    tags: "*"
 concurrency:
   # Skip intermediate builds: all builds except for builds on the `main` branch
   # Cancel intermediate builds: only pull request builds
@@ -17,15 +16,28 @@ permissions:
 jobs:
   finalize:
     timeout-minutes: 10
-    needs: [test]
+    needs: [test, check]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo test: ${{ needs.test.result }}
+          echo check: ${{ needs.check.result }}
       - run: exit 1
         if: |
-          (needs.test.result != 'success')
+          (needs.test.result != 'success') ||
+          (needs.check.result != 'success')
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: "1"
+      - run: make format-check
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -33,9 +45,9 @@ jobs:
       fail-fast: false
       matrix:
         julia-version:
-          - '1.7'
-          - '1.8'
-          - '1'
+          - "1.7"
+          - "1.8"
+          - "1"
         os:
           - ubuntu-latest
           - windows-latest
@@ -49,7 +61,7 @@ jobs:
           persist-credentials: false
       - uses: julia-actions/setup-julia@v1
         with:
-          version: '${{ matrix.julia-version }}'
+          version: "${{ matrix.julia-version }}"
       - run: julia .ci/setup.jl # sets the `TEMP_DEPOT` environment variable
       - uses: ./ # run this action
         with:
