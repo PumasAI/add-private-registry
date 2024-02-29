@@ -1,5 +1,7 @@
 # add-private-registry
 
+Hello world.
+
 [![Continuous Integration](https://github.com/PumasAI/add-private-registry/actions/workflows/ci.yml/badge.svg "Continuous Integration")](https://github.com/PumasAI/add-private-registry/actions/workflows/ci.yml)
 
 Add a private Julia package registry from a Pkg Server.
