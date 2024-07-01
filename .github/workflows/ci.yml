@@ -57,7 +57,7 @@ jobs:
           - true
           - false
         exclude:
-          - os: macos-13
+          - os: macos-latest
             julia-version: "1.7"
     steps:
       - uses: actions/checkout@v4
