@@ -51,10 +51,14 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
-          - macOS-latest
+          - macos-13
+          - macos-latest
         install_general_registry:
           - true
           - false
+        exclude:
+          - os: macos-latest
+            julia-version: "1.7"
     steps:
       - uses: actions/checkout@v4
         with:
