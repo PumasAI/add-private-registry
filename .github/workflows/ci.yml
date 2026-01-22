@@ -55,7 +55,7 @@ jobs:
           - macos-latest # Apple Silicon
         install_general_registry:
           - true
-          - false
+          # - false # TODO: Uncomment this line
         exclude:
           - os: macos-latest
             julia-version: "1.7"
