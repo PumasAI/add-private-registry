@@ -45,9 +45,9 @@ jobs:
       fail-fast: false
       matrix:
         julia-version:
-          - "1.7"
-          - "1.8"
-          - "1"
+          - "1.10" # LTS
+          - "1.11"
+          - "1"    # latest
         os:
           - ubuntu-latest
           - windows-latest
