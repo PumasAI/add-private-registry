@@ -47,8 +47,8 @@ jobs:
         julia-version:
           - "lts" # currently 1.10
           - "1.11"
-          # - "1.12" # currently the same as "1"
-          - "1"
+          # - "1.12"
+          - "1" # currently 1.12
         os:
           - ubuntu-latest
           - windows-latest
