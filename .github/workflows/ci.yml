@@ -47,6 +47,9 @@ jobs:
         julia-version:
           - "1.7"
           - "1.8"
+          - "lts"
+          - "1.11"
+          # - "1.12" # currently the same as "1"
           - "1"
         os:
           - ubuntu-latest
